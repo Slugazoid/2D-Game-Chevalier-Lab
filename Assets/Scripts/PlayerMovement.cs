@@ -16,13 +16,45 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashSpeed = 15f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 1f;
-    private bool isDashing = false; 
+    private bool isDashing = false;
     private float nextDashTime = 0f;
+
+    [Header("Jump Settings")]
+    [Tooltip("1 = single jump biasa, 2 = double jump, dst")]
+    public int maxJumps = 2;
+    private int jumpCount = 0;
+
+    [Header("Ground Check")]
+    public Transform groundCheck;
+    public float groundCheckRadius = 0.2f;
+    public LayerMask groundLayer;
+    private bool isGrounded;
+    private bool canMove = true;
+
+    public void SetCanMove(bool value)
+    {
+        canMove = value;
+    }
 
     // Update is called once per frame
     void Update()
     {
         if (isDashing) return;
+
+        if (!canMove)
+        {
+            input = 0f;
+            if (animator != null) animator.SetFloat("Speed", 0f);
+            return;
+        }
+
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+        if (isGrounded && Rigidbody2D.linearVelocity.y <= 0f)
+        {
+            jumpCount = 0;
+        }
+
         input = Input.GetAxisRaw("Horizontal");
         animator.SetFloat("Speed", Mathf.Abs(input));
         Vector3 currentScale = transform.localScale;
@@ -38,10 +70,11 @@ public class PlayerMovement : MonoBehaviour
 
         transform.localScale = currentScale;
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && jumpCount < maxJumps)
         {
-            Rigidbody2D.linearVelocity = Vector2.up * jumpForce;
+            Rigidbody2D.linearVelocity = new Vector2(Rigidbody2D.linearVelocity.x, jumpForce);
             animator.SetBool("isJumping", true);
+            jumpCount++;
         }
 
         if (Mathf.Abs(Rigidbody2D.linearVelocity.y) < 0.01f)
@@ -88,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isDashing) return;
+        if (isDashing || !canMove) return;
         Rigidbody2D.linearVelocity = new Vector2(input * speed, Rigidbody2D.linearVelocity.y);
     }
 
@@ -97,5 +130,12 @@ public class PlayerMovement : MonoBehaviour
         Vector3 pos = transform.position;
         pos.x = Mathf.Clamp(pos.x, leftBound.position.x + boundOffset, rightBound.position.x - boundOffset);
         transform.position = pos;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (groundCheck == null) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
 }
