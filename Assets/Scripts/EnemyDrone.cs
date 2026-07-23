@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class EnemyDrone : MonoBehaviour
+public class EnemyDrone : MonoBehaviour, IDamageable
 {
     private enum EnemyState { Patrol, Chase, Attack, Hurt, Dead }
 
@@ -19,6 +19,7 @@ public class EnemyDrone : MonoBehaviour
     public float chaseSpeed = 3f;
 
     public float attackCooldown = 1.5f;
+    public int attackDamage = 1;
     public GameObject projectilePrefab;
     public Transform firePoint;
     private float nextAttackTime = 0f;
@@ -28,17 +29,24 @@ public class EnemyDrone : MonoBehaviour
     private float hurtDuration = 0.4f;
     private float hurtTimer = 0f;
 
+    [Header("Turning")]
+    public float turnAnimationDuration = 0.5f;
+    private bool isTurning = false;
+
     private EnemyState currentState = EnemyState.Patrol;
     private Vector3 startPosition;
     private int patrolDirection = -1;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         startPosition = transform.position;
         currentHealth = maxHealth;
 
-        if (rb != null) rb.gravityScale = 0f;
+        if (rb != null)
+        {
+            rb.gravityScale = 0f;
+        }
+
         FlipSprite(patrolDirection);
 
         if (player == null)
@@ -48,7 +56,6 @@ public class EnemyDrone : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (currentState == EnemyState.Dead) return;
@@ -59,6 +66,12 @@ public class EnemyDrone : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             if (hurtTimer <= 0f) currentState = EnemyState.Patrol;
 
+            if (animator != null) animator.SetFloat("Speed", 0f);
+            return;
+        }
+
+        if (isTurning)
+        {
             if (animator != null) animator.SetFloat("Speed", 0f);
             return;
         }
@@ -99,7 +112,6 @@ public class EnemyDrone : MonoBehaviour
         }
     }
 
-    public float turnAnimationDuration = 0.5f;
     private void Patrol()
     {
         float distanceFromStart = transform.position.x - startPosition.x;
@@ -110,22 +122,34 @@ public class EnemyDrone : MonoBehaviour
 
         if (newDirection != patrolDirection)
         {
-            patrolDirection = newDirection;
-            if (animator != null) animator.SetTrigger("Turn");
-            StartCoroutine(FlipAfterTurn(patrolDirection));
+            StartCoroutine(TurnThenPatrol(newDirection));
+            return;
         }
 
+        ApplyHoverMovement(patrolDirection);
+    }
+
+    private IEnumerator TurnThenPatrol(int newDirection)
+    {
+        isTurning = true;
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+
+        if (animator != null) animator.SetTrigger("Turn");
+
+        yield return new WaitForSeconds(turnAnimationDuration);
+
+        patrolDirection = newDirection;
+        FlipSprite(patrolDirection);
+        isTurning = false;
+    }
+
+    private void ApplyHoverMovement(int direction)
+    {
         float hoverOffset = Mathf.Sin(Time.time * hoverSpeed) * hoverHeight;
         float targetY = startPosition.y + hoverOffset;
         float verticalVelocity = (targetY - transform.position.y) * hoverSpeed;
 
-        rb.linearVelocity = new Vector2(patrolDirection * patrolSpeed, verticalVelocity);
-    }
-
-    private IEnumerator FlipAfterTurn(int direction)
-    {
-        yield return new WaitForSeconds(turnAnimationDuration);
-        FlipSprite(direction);
+        rb.linearVelocity = new Vector2(direction * patrolSpeed, verticalVelocity);
     }
 
     private void Chase()
@@ -146,7 +170,9 @@ public class EnemyDrone : MonoBehaviour
             {
                 GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
                 Vector2 dirToPlayer = (player.position - firePoint.position).normalized;
-                proj.GetComponent<Projectile>().SetDirection(dirToPlayer);
+                Projectile projectileScript = proj.GetComponent<Projectile>();
+                projectileScript.SetDirection(dirToPlayer);
+                projectileScript.damage = attackDamage;
             }
             nextAttackTime = Time.time + attackCooldown;
         }
@@ -170,7 +196,7 @@ public class EnemyDrone : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator FlashRed()
+    private IEnumerator FlashRed()
     {
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr == null) yield break;
@@ -185,7 +211,6 @@ public class EnemyDrone : MonoBehaviour
     {
         currentState = EnemyState.Dead;
         rb.linearVelocity = Vector2.zero;
-        rb.bodyType = RigidbodyType2D.Kinematic;
 
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;

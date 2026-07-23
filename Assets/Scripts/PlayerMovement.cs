@@ -31,6 +31,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private bool canMove = true;
 
+    [Header("Attack Damage")]
+    public Transform attackPoint;
+    public float attackRange = 0.8f;
+    public int attackDamage = 1;
+    public LayerMask enemyLayer;
+
     public void SetCanMove(bool value)
     {
         canMove = value;
@@ -101,6 +107,16 @@ public class PlayerMovement : MonoBehaviour
     void Attack()
     {
         animator.SetTrigger("Attack");
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
+
+        foreach (Collider2D enemyCollider in hitEnemies)
+        {
+            IDamageable damageable = enemyCollider.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage(attackDamage);
+            }
+        }
     }
 
     private IEnumerator PerformDash()
@@ -134,8 +150,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (groundCheck == null) return;
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
+
+        if (attackPoint != null)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        }
     }
 }
