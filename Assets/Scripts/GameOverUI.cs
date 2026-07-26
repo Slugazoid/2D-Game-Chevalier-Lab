@@ -11,6 +11,9 @@ public class GameOverUI : MonoBehaviour
     [Tooltip("Panel Game Over yang mau ditampilkan (harus punya CanvasGroup)")]
     public CanvasGroup gameOverPanel;
 
+    [Tooltip("Drag PauseMenuUI di scene, biar Pause otomatis terkunci begitu player mati")]
+    public PauseMenuUI pauseMenuUI;
+
     [Header("Timing")]
     [Tooltip("Jeda sebelum panel muncul, kasih waktu animasi death player muter dulu")]
     public float delayBeforeShow = 1.5f;
@@ -49,6 +52,13 @@ public class GameOverUI : MonoBehaviour
 
     private void HandlePlayerDeath()
     {
+        // Kunci Pause dari sekarang, gak nunggu delay — biar ESC gak bisa dipencet
+        // sekalipun masih di tengah animasi Death / jeda sebelum panel Game Over muncul.
+        if (pauseMenuUI != null)
+        {
+            pauseMenuUI.SetLocked(true);
+        }
+
         StartCoroutine(ShowGameOverSequence());
     }
 

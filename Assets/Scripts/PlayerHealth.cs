@@ -19,7 +19,6 @@ public class PlayerHealth : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public PlayerMovement playerMovement;
 
-    public float deathDelay = 1.5f;
     public event Action<int, int> OnHealthChanged;
     public event Action OnPlayerDeath;
     private bool isDead = false;
@@ -107,17 +106,7 @@ public class PlayerHealth : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Kinematic;
 
         if (animator != null) animator.SetTrigger("Death");
-
         OnPlayerDeath?.Invoke();
-        StartCoroutine(HandleDeathSequence());
-    }
-
-    private IEnumerator HandleDeathSequence()
-    {
-        yield return new WaitForSeconds(deathDelay);
-
-        // TODO: ganti sesuai kebutuhan — reload scene, tampilkan Game Over screen, atau respawn di checkpoint
-        // UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
     public int GetCurrentHealth() => currentHealth;
