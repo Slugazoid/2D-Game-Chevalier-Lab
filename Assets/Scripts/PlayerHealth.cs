@@ -96,11 +96,17 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         isDead = true;
+
+        if (playerMovement != null)
+        {
+            playerMovement.StopAllCoroutines();
+            playerMovement.enabled = false;
+        }
+
         rb.linearVelocity = Vector2.zero;
+        rb.bodyType = RigidbodyType2D.Kinematic;
 
         if (animator != null) animator.SetTrigger("Death");
-
-        if (playerMovement != null) playerMovement.enabled = false;
 
         OnPlayerDeath?.Invoke();
         StartCoroutine(HandleDeathSequence());

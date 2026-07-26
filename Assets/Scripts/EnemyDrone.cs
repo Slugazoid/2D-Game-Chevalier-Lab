@@ -162,6 +162,8 @@ public class EnemyDrone : MonoBehaviour, IDamageable
     private void Attack()
     {
         rb.linearVelocity = Vector2.zero;
+        FlipSprite(player.position.x > transform.position.x ? 1 : -1);
+
         if (Time.time >= nextAttackTime)
         {
             if (animator != null) animator.SetTrigger("Attack");
