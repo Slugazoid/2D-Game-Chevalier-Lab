@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PauseMenuUI : MonoBehaviour
 {
@@ -18,9 +19,7 @@ public class PauseMenuUI : MonoBehaviour
 
     private bool isPaused = false;
     private bool isLocked = false;
-    private float fadeTimer = 0f;
-    private bool isFadingIn = false;
-    private bool isFadingOut = false;
+    private Coroutine fadeCoroutine;
 
     private void Start()
     {
@@ -37,13 +36,10 @@ public class PauseMenuUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isLocked) return;
-
             if (playerHealth != null && playerHealth.IsDead()) return;
 
             TogglePause();
         }
-
-        HandleFade();
     }
 
     public void SetLocked(bool locked)
@@ -64,7 +60,9 @@ public class PauseMenuUI : MonoBehaviour
 
     public void Pause()
     {
+        if (isPaused) return; // cegah double-call kalau ke-panggil 2x sebelum sempat toggle balik
         isPaused = true;
+
         Time.timeScale = 0f;
 
         if (playerMovement != null)
@@ -82,14 +80,15 @@ public class PauseMenuUI : MonoBehaviour
             pausePanel.blocksRaycasts = true;
         }
 
-        isFadingIn = true;
-        isFadingOut = false;
-        fadeTimer = 0f;
+        StartFade(1f);
     }
 
+    // Attach ke OnClick() tombol "Resume" di Inspector
     public void Resume()
     {
+        if (!isPaused) return; // cegah double-call
         isPaused = false;
+
         Time.timeScale = 1f;
 
         if (playerMovement != null) playerMovement.enabled = true;
@@ -100,9 +99,7 @@ public class PauseMenuUI : MonoBehaviour
             pausePanel.blocksRaycasts = false;
         }
 
-        isFadingOut = true;
-        isFadingIn = false;
-        fadeTimer = 0f;
+        StartFade(0f);
 
         if (UnityEngine.EventSystems.EventSystem.current != null)
         {
@@ -110,30 +107,42 @@ public class PauseMenuUI : MonoBehaviour
         }
     }
 
-    private void HandleFade()
+    private void StartFade(float targetAlpha)
     {
         if (pausePanel == null) return;
 
-        if (isFadingIn)
+        // Hentikan fade sebelumnya kalau masih jalan, biar gak tabrakan/ke-overlap
+        if (fadeCoroutine != null)
         {
-            fadeTimer += Time.unscaledDeltaTime;
-            pausePanel.alpha = Mathf.Clamp01(fadeTimer / fadeDuration);
-            if (fadeTimer >= fadeDuration) isFadingIn = false;
+            StopCoroutine(fadeCoroutine);
         }
-        else if (isFadingOut)
-        {
-            fadeTimer += Time.unscaledDeltaTime;
-            pausePanel.alpha = 1f - Mathf.Clamp01(fadeTimer / fadeDuration);
-            if (fadeTimer >= fadeDuration) isFadingOut = false;
-        }
+        fadeCoroutine = StartCoroutine(FadeCanvasGroup(targetAlpha));
     }
 
+    private IEnumerator FadeCanvasGroup(float targetAlpha)
+    {
+        float startAlpha = pausePanel.alpha;
+        float timer = 0f;
+
+        while (timer < fadeDuration)
+        {
+            timer += Time.unscaledDeltaTime;
+            pausePanel.alpha = Mathf.Lerp(startAlpha, targetAlpha, timer / fadeDuration);
+            yield return null;
+        }
+
+        pausePanel.alpha = targetAlpha;
+        fadeCoroutine = null;
+    }
+
+    // Attach ke OnClick() tombol "Restart" di Inspector
     public void RestartLevel()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    // Attach ke OnClick() tombol "Quit" di Inspector (opsional)
     public void QuitGame()
     {
         Time.timeScale = 1f;
