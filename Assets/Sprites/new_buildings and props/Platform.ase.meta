@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c1c5f87af4140d94caa5466d35e6f677
+guid: 15895fe2578ab7f4195d59a40dcb5a52
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -125,9 +125,9 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
   animatedSpriteImportData:
-  - name: 2nd lamp street
+  - name: Platform
     originalName: 
-    pivot: {x: 0.54444444, y: -0.05844156}
+    pivot: {x: 0.4935065, y: -0.15492958}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -135,9 +135,9 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 45
-      height: 154
-    spriteID: 7f7699a29ac61784d9cb90cc4f1ae382
+      width: 154
+      height: 71
+    spriteID: 7edd59508fc5d7744a2f4c5859827b8e
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -151,25 +151,25 @@ ScriptedImporter:
   asepriteLayers:
   - layerIndex: 0
     uuid:
-      value0: 267954509
+      value0: 1086556859
       value1: 0
       value2: 0
       value3: 0
     guid: 0
-    name: 2nd lamp street
+    name: Platform
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: 2nd lamp street
+    - name: Platform
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 0
-        y: 9
-        width: 45
-        height: 154
-      spriteId: 7f7699a29ac61784d9cb90cc4f1ae382
+        x: 4
+        y: 11
+        width: 154
+        height: 71
+      spriteId: 7edd59508fc5d7744a2f4c5859827b8e
     linkedCells: []
     tileCells: []
     tileSetIndex: 0
@@ -178,5 +178,5 @@ ScriptedImporter:
   platformSettings: []
   generatePhysicsShape: 0
   secondarySpriteTextures: []
-  previousTextureSize: {x: 64, y: 256}
-  canvasSize: {x: 49, y: 170}
+  previousTextureSize: {x: 256, y: 128}
+  canvasSize: {x: 160, y: 93}
