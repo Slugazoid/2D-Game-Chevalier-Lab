@@ -138,8 +138,15 @@ public class PauseMenuUI : MonoBehaviour
     // Attach ke OnClick() tombol "Restart" di Inspector
     public void RestartLevel()
     {
-        Time.timeScale = 1f;
+        Time.timeScale = 1f; // Wajib reset waktu sebelum pindah scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // Attach ke OnClick() tombol "Main Menu" di Inspector
+    public void BackToMainMenu()
+    {
+        Time.timeScale = 1f; // Wajib reset waktu sebelum pindah scene
+        SceneManager.LoadScene("MainMenu"); // Load nama scene Main Menu sesuai yang ada di Build Profiles
     }
 
     // Attach ke OnClick() tombol "Quit" di Inspector (opsional)
@@ -147,7 +154,6 @@ public class PauseMenuUI : MonoBehaviour
     {
         Time.timeScale = 1f;
         Application.Quit();
-
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif

@@ -37,6 +37,10 @@ public class PlayerMovement : MonoBehaviour
     public int attackDamage = 1;
     public LayerMask enemyLayer;
 
+    [Header("Audio Settings")]
+    public AudioSource audioSource;
+    public AudioClip attackSound;
+
     public void SetCanMove(bool value)
     {
         canMove = value;
@@ -107,6 +111,11 @@ public class PlayerMovement : MonoBehaviour
     void Attack()
     {
         animator.SetTrigger("Attack");
+        if (audioSource != null && attackSound != null)
+        {
+            audioSource.PlayOneShot(attackSound);
+        }
+
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
 
         foreach (Collider2D enemyCollider in hitEnemies)
