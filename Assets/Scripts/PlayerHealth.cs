@@ -92,6 +92,14 @@ public class PlayerHealth : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
+    public void InstantKill()
+    {
+        if (isDead) return;
+        currentHealth = 0;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        Die();
+    }
+
     private void Die()
     {
         isDead = true;
