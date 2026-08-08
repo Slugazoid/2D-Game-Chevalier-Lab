@@ -17,7 +17,7 @@ public class CameraFollow : MonoBehaviour
         float clampedX = Mathf.Clamp(
             desiredPosition.x,
             LeftBound.position.x + camHalfWidth,
-            RightBound.position.x + camHalfWidth
+            RightBound.position.x - camHalfWidth
             );
         desiredPosition.x = clampedX;
 
