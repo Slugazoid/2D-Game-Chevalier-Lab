@@ -71,6 +71,13 @@ public class BossController : MonoBehaviour, IDamageable
             GameObject p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
+
+        // Langsung ngadep ke player begitu fight mulai, apapun posisi awal boss.
+        if (player != null)
+        {
+            float initialDirection = player.position.x > transform.position.x ? 1f : -1f;
+            FlipSprite(initialDirection);
+        }
     }
 
     void Update()
