@@ -2963,7 +2963,7 @@ Transform:
   m_GameObject: {fileID: 1460091853}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.28, y: -0.021558259, z: 0}
+  m_LocalPosition: {x: 0.267, y: -0.021558259, z: 0}
   m_LocalScale: {x: 0.1916641, y: 0.18806198, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3136,12 +3136,12 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  moveSpeed: 3
+  moveSpeed: 2
   detectionRange: 8
   attackPoint: {fileID: 1460091854}
-  attackRange: 1.2
-  attackDamage: 10
-  attackCooldown: 1.5
+  attackRange: 2.5
+  attackDamage: 5
+  attackCooldown: 2
   maxHealth: 50
   hurtDuration: 0.4
   phase2HealthPercent: 0.66
