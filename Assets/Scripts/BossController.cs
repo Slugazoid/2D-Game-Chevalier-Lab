@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 // Boss ground-melee dengan sistem fase. Fase cuma nge-tune angka yang udah
-// ada (speed, cooldown, damage) berdasarkan sisa HP - nggak perlu animasi
+// ada (speed, cooldown, damage) berdasarkan sisa HP
 public class BossController : MonoBehaviour, IDamageable
 {
     private enum BossState { Idle, Chase, Attack, Hurt, Dead }
@@ -28,6 +28,8 @@ public class BossController : MonoBehaviour, IDamageable
     public float attackRange = 1.2f;
     public int attackDamage = 10;
     public float attackCooldown = 1.5f;
+    [Tooltip("Jeda dari trigger animasi Attack sampe damage beneran kekasih (ganti manual, bukan lewat Animation Event lagi)")]
+    public float attackDelay = 0.3f;
     private float nextAttackTime = 0f;
 
     [Header("Health & Phase")]
@@ -154,14 +156,24 @@ public class BossController : MonoBehaviour, IDamageable
 
         if (Time.time >= nextAttackTime)
         {
-            if (animator != null) animator.SetTrigger("Attack");
+            if (animator != null)
+            {
+                animator.SetInteger("AttackIndex", Random.Range(0, 2)); // 0 = BossAttack1, 1 = BossAttack2
+                animator.SetTrigger("Attack");
+            }
+            StartCoroutine(DealDamageAfterDelay());
             nextAttackTime = Time.time + effectiveCooldown;
         }
     }
 
-    // Dipanggil lewat Animation Event di frame sabetan pedang (sama kayak sebelumnya).
-    public void DealDamage()
+    // Ganti Animation Event: damage kekasih otomatis attackDelay detik setelah trigger,
+    // ga perlu nempelin event manual di tiap clip attack lagi.
+    private IEnumerator DealDamageAfterDelay()
     {
+        yield return new WaitForSeconds(attackDelay);
+
+        if (currentState == BossState.Dead) yield break;
+
         Collider2D hit = Physics2D.OverlapCircle(attackPoint.position, attackRange);
         if (hit != null && hit.CompareTag("Player"))
         {
