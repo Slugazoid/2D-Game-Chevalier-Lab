@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Wajib ditambahkan untuk load scene
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class MainMenuUI : MonoBehaviour
@@ -49,8 +49,18 @@ public class MainMenuUI : MonoBehaviour
             mainMenuPanel.interactable = false;
         }
 
-        // Pindah ke Scene gameplay
-        SceneManager.LoadScene(namaSceneGameplay);
+        // Pindah ke Scene gameplay pake fade, sama kayak transisi Boss -> Credits
+        if (SceneFader.Instance != null)
+        {
+            SceneFader.Instance.FadeToScene(namaSceneGameplay);
+        }
+        else
+        {
+            // Fallback kalau SceneFader belum ke-load di scene ini (harusnya jarang
+            // kejadian karena MainMenu biasanya scene pertama yang dibuka).
+            Debug.LogWarning("SceneFader.Instance null, load scene langsung tanpa fade.");
+            SceneManager.LoadScene(namaSceneGameplay);
+        }
     }
 
     // Attach ke OnClick() tombol "Settings"

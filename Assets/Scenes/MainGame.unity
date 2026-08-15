@@ -9114,7 +9114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   playerTransform: {fileID: 1460268882}
-  offset: {x: 0, y: 3, z: -10}
+  offset: {x: 0, y: 3.5, z: -10}
   smoothSpeed: 2
   cam: {fileID: 519420031}
   LeftBound: {fileID: 227612301}
@@ -20968,7 +20968,7 @@ MonoBehaviour:
     m_Bits: 8
   attackPoint: {fileID: 1255731015}
   attackRange: 0.8
-  attackDamage: 2
+  attackDamage: 4
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64

@@ -38,6 +38,7 @@ public class BossController : MonoBehaviour, IDamageable
     private int currentHealth;
     public float hurtDuration = 0.4f;
     private float hurtTimer = 0f;
+    public float deathYOffset = 0.3f;
 
     // Dengerin ini dari HealthBarUI buat update slider (sama pola kayak PlayerHealth.cs)
     public event Action<int, int> OnHealthChanged;
@@ -273,6 +274,7 @@ public class BossController : MonoBehaviour, IDamageable
         currentState = BossState.Dead;
         rb.linearVelocity = Vector2.zero;
         rb.bodyType = RigidbodyType2D.Kinematic;
+        transform.position -= new Vector3(0f, deathYOffset, 0f);
 
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;

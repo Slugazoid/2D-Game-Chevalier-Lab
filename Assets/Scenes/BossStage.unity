@@ -2767,8 +2767,9 @@ MonoBehaviour:
   attackDamage: 5
   attackCooldown: 1.5
   attackDelay: 0.2
-  maxHealth: 50
+  maxHealth: 55
   hurtDuration: 0.4
+  deathYOffset: 0.8
   phase2HealthPercent: 0.66
   phase3HealthPercent: 0.33
   phase2SpeedMult: 1.25
@@ -3606,7 +3607,7 @@ Transform:
   m_GameObject: {fileID: 1482352419}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.16883, y: 1.55105, z: 0}
+  m_LocalPosition: {x: -0.18, y: 1.55105, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

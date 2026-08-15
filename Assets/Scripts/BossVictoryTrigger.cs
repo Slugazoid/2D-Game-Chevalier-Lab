@@ -41,6 +41,17 @@ public class BossVictoryTrigger : MonoBehaviour
     private IEnumerator TransitionSequence()
     {
         yield return new WaitForSecondsRealtime(delayBeforeTransition);
-        SceneManager.LoadScene(namaSceneCredits);
+
+        if (SceneFader.Instance != null)
+        {
+            SceneFader.Instance.FadeToScene(namaSceneCredits);
+        }
+        else
+        {
+            // Fallback kalau SceneFader belum ke-load (misal Play Mode langsung
+            // dari scene BossStage tanpa lewat MainMenu dulu pas testing).
+            Debug.LogWarning("SceneFader.Instance null, load scene langsung tanpa fade.");
+            SceneManager.LoadScene(namaSceneCredits);
+        }
     }
 }
