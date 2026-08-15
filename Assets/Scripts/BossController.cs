@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 
 // Boss ground-melee dengan sistem fase. Fase cuma nge-tune angka yang udah
@@ -38,6 +39,9 @@ public class BossController : MonoBehaviour, IDamageable
     public float hurtDuration = 0.4f;
     private float hurtTimer = 0f;
 
+    // Dengerin ini dari HealthBarUI buat update slider (sama pola kayak PlayerHealth.cs)
+    public event Action<int, int> OnHealthChanged;
+
     [Tooltip("Pindah ke Fase 2 kalau sisa HP di bawah persentase ini")]
     [Range(0f, 1f)] public float phase2HealthPercent = 0.66f;
     [Tooltip("Pindah ke Fase 3 (enrage) kalau sisa HP di bawah persentase ini")]
@@ -65,6 +69,7 @@ public class BossController : MonoBehaviour, IDamageable
     void Start()
     {
         currentHealth = maxHealth;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
         spriteRenderer = GetComponent<SpriteRenderer>();
         RecalculatePhaseStats();
 
@@ -158,7 +163,7 @@ public class BossController : MonoBehaviour, IDamageable
         {
             if (animator != null)
             {
-                animator.SetInteger("AttackIndex", Random.Range(0, 2)); // 0 = BossAttack1, 1 = BossAttack2
+                animator.SetInteger("AttackIndex", UnityEngine.Random.Range(0, 2)); // 0 = BossAttack1, 1 = BossAttack2
                 animator.SetTrigger("Attack");
             }
             StartCoroutine(DealDamageAfterDelay());
@@ -187,6 +192,8 @@ public class BossController : MonoBehaviour, IDamageable
         if (currentState == BossState.Dead) return;
 
         currentHealth -= amount;
+        currentHealth = Mathf.Max(currentHealth, 0);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (currentHealth <= 0)
         {
@@ -269,6 +276,9 @@ public class BossController : MonoBehaviour, IDamageable
 
         // TODO: panggil UI kemenangan / balik ke MainMenu di sini kalau udah ada.
     }
+
+    public int GetCurrentHealth() => currentHealth;
+    public bool IsDead() => currentState == BossState.Dead;
 
     private void FlipSprite(float direction)
     {

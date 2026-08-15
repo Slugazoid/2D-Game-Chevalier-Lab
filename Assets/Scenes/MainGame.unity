@@ -9365,7 +9365,7 @@ MonoBehaviour:
   attackDamage: 3
   projectilePrefab: {fileID: 4528060400476420583, guid: c42a2d26afb4964428ef99306f8dfd4c, type: 3}
   firePoint: {fileID: 908798374}
-  maxHealth: 3
+  maxHealth: 8
   turnAnimationDuration: 0.8
 --- !u!95 &540635324
 Animator:
@@ -11902,7 +11902,7 @@ MonoBehaviour:
   attackDamage: 3
   projectilePrefab: {fileID: 4528060400476420583, guid: c42a2d26afb4964428ef99306f8dfd4c, type: 3}
   firePoint: {fileID: 1678883976}
-  maxHealth: 3
+  maxHealth: 8
   turnAnimationDuration: 0.8
 --- !u!95 &718776671
 Animator:
@@ -12903,7 +12903,7 @@ MonoBehaviour:
   attackDamage: 3
   projectilePrefab: {fileID: 4528060400476420583, guid: c42a2d26afb4964428ef99306f8dfd4c, type: 3}
   firePoint: {fileID: 1412280405}
-  maxHealth: 3
+  maxHealth: 8
   turnAnimationDuration: 0.8
 --- !u!95 &778029250
 Animator:
@@ -13847,7 +13847,7 @@ MonoBehaviour:
   attackDamage: 3
   projectilePrefab: {fileID: 4528060400476420583, guid: c42a2d26afb4964428ef99306f8dfd4c, type: 3}
   firePoint: {fileID: 1962913937}
-  maxHealth: 3
+  maxHealth: 8
   turnAnimationDuration: 0.8
 --- !u!95 &859357256
 Animator:
@@ -15490,7 +15490,7 @@ MonoBehaviour:
   attackDamage: 3
   projectilePrefab: {fileID: 4528060400476420583, guid: c42a2d26afb4964428ef99306f8dfd4c, type: 3}
   firePoint: {fileID: 1903611606}
-  maxHealth: 3
+  maxHealth: 8
   turnAnimationDuration: 0.8
 --- !u!95 &986385879
 Animator:
@@ -18437,7 +18437,7 @@ MonoBehaviour:
   attackDamage: 3
   projectilePrefab: {fileID: 4528060400476420583, guid: c42a2d26afb4964428ef99306f8dfd4c, type: 3}
   firePoint: {fileID: 1367341614}
-  maxHealth: 3
+  maxHealth: 8
   turnAnimationDuration: 0.8
 --- !u!95 &1245008455
 Animator:
@@ -20219,7 +20219,7 @@ MonoBehaviour:
   attackDamage: 3
   projectilePrefab: {fileID: 4528060400476420583, guid: c42a2d26afb4964428ef99306f8dfd4c, type: 3}
   firePoint: {fileID: 2104391515}
-  maxHealth: 3
+  maxHealth: 8
   turnAnimationDuration: 0.8
 --- !u!95 &1390971262
 Animator:
@@ -29582,7 +29582,7 @@ MonoBehaviour:
   attackDamage: 3
   projectilePrefab: {fileID: 4528060400476420583, guid: c42a2d26afb4964428ef99306f8dfd4c, type: 3}
   firePoint: {fileID: 2075836953}
-  maxHealth: 3
+  maxHealth: 8
   turnAnimationDuration: 0.8
 --- !u!1 &2011591195
 GameObject:
@@ -30100,7 +30100,7 @@ MonoBehaviour:
   attackDamage: 3
   projectilePrefab: {fileID: 4528060400476420583, guid: c42a2d26afb4964428ef99306f8dfd4c, type: 3}
   firePoint: {fileID: 2095529515}
-  maxHealth: 3
+  maxHealth: 8
   turnAnimationDuration: 0.8
 --- !u!95 &2034309675
 Animator:
