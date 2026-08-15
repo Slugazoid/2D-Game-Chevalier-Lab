@@ -42,6 +42,9 @@ public class BossController : MonoBehaviour, IDamageable
     // Dengerin ini dari HealthBarUI buat update slider (sama pola kayak PlayerHealth.cs)
     public event Action<int, int> OnHealthChanged;
 
+    // Dengerin ini dari BossVictoryTrigger buat transisi ke Credits
+    public event Action OnBossDeath;
+
     [Tooltip("Pindah ke Fase 2 kalau sisa HP di bawah persentase ini")]
     [Range(0f, 1f)] public float phase2HealthPercent = 0.66f;
     [Tooltip("Pindah ke Fase 3 (enrage) kalau sisa HP di bawah persentase ini")]
@@ -195,6 +198,7 @@ public class BossController : MonoBehaviour, IDamageable
         currentHealth = Mathf.Max(currentHealth, 0);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
+
         if (currentHealth <= 0)
         {
             Die();
@@ -268,13 +272,29 @@ public class BossController : MonoBehaviour, IDamageable
     {
         currentState = BossState.Dead;
         rb.linearVelocity = Vector2.zero;
+        rb.bodyType = RigidbodyType2D.Kinematic;
 
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
 
         if (animator != null) animator.SetTrigger("Death");
 
-        // TODO: panggil UI kemenangan / balik ke MainMenu di sini kalau udah ada.
+        OnBossDeath?.Invoke();
+    }
+
+    // Nunggu boss bener-bener napak lantai dulu (gravity natural yang nurunin dia),
+    // baru abis itu fisikanya dikunci total biar mayatnya diem selamanya di situ
+    // (ga bisa ke-push atau jatuh tembus lantai lagi walau collider ground nanti dimatiin).
+    private IEnumerator FreezeOnceGrounded()
+    {
+        while (groundCheck == null || !Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer))
+        {
+            yield return null;
+        }
+
+        rb.linearVelocity = Vector2.zero;
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.gravityScale = 0f;
     }
 
     public int GetCurrentHealth() => currentHealth;

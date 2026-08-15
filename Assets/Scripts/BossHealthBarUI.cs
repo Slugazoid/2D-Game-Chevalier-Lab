@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// Pola sama kayak HealtBarUI.cs (punya player), tapi dengerin BossController
-// dan nambahin ganti warna fill sesuai fase HP boss.
+// Pola sama kayak HealtBarUI.cs (punya player), tapi dengerin BossController.
+// Warna fill fix satu warna aja, ga ganti-ganti per fase HP.
 public class BossHealthBarUI : MonoBehaviour
 {
     [Header("Referensi")]
@@ -13,7 +13,7 @@ public class BossHealthBarUI : MonoBehaviour
     [Tooltip("Drag komponen Slider yang jadi health bar")]
     public Slider healthSlider;
 
-    [Tooltip("Drag Image yang jadi fill si Slider (buat ganti warna per fase). Boleh dikosongkan kalau ga perlu ganti warna.")]
+    [Tooltip("Drag Image yang jadi fill si Slider. Boleh dikosongkan kalau ga perlu set warna dari sini.")]
     public Image fillImage;
 
     [Tooltip("Drag komponen TextMeshProUGUI untuk nampilin nama boss (opsional)")]
@@ -25,10 +25,9 @@ public class BossHealthBarUI : MonoBehaviour
     public bool showHealthText = false;
     public TextMeshProUGUI healthText;
 
-    [Header("Warna per Fase")]
-    public Color phase1Color = new Color(0.2f, 0.85f, 0.3f); // hijau
-    public Color phase2Color = new Color(1f, 0.8f, 0.1f);    // kuning
-    public Color phase3Color = new Color(0.9f, 0.15f, 0.15f); // merah (enrage)
+    [Header("Warna Fill")]
+    [Tooltip("Warna fill health bar, tetap sama dari awal sampe boss mati (ga ganti-ganti per fase lagi)")]
+    public Color fillColor = new Color(0.9f, 0.15f, 0.15f); // merah
 
     [Header("Opsional: Smooth Animation")]
     public bool smoothTransition = true;
@@ -66,7 +65,7 @@ public class BossHealthBarUI : MonoBehaviour
 
         if (bossNameText != null) bossNameText.text = bossName;
 
-        UpdateFillColor(1f);
+        if (fillImage != null) fillImage.color = fillColor;
         UpdateHealthText(bossController.maxHealth, bossController.maxHealth);
     }
 
@@ -75,6 +74,13 @@ public class BossHealthBarUI : MonoBehaviour
         if (smoothTransition && healthSlider.value != targetValue)
         {
             healthSlider.value = Mathf.Lerp(healthSlider.value, targetValue, smoothSpeed * Time.deltaTime);
+
+            // Lerp itu asymptotic, ga pernah bener-bener nyampe targetValue (makanya
+            // bar keliatan "ga full habis" pas boss mati). Snap begitu udah deket banget.
+            if (Mathf.Abs(healthSlider.value - targetValue) < 0.01f)
+            {
+                healthSlider.value = targetValue;
+            }
         }
     }
 
@@ -91,23 +97,7 @@ public class BossHealthBarUI : MonoBehaviour
             healthSlider.value = currentHealth;
         }
 
-        float percent = maxHealth > 0 ? (float)currentHealth / maxHealth : 0f;
-        UpdateFillColor(percent);
         UpdateHealthText(currentHealth, maxHealth);
-    }
-
-    // Warnanya nyontek threshold yang sama kayak phase2HealthPercent/phase3HealthPercent
-    // di BossController, biar bar berubah warna pas boss ganti fase beneran.
-    private void UpdateFillColor(float healthPercent)
-    {
-        if (fillImage == null || bossController == null) return;
-
-        if (healthPercent <= bossController.phase3HealthPercent)
-            fillImage.color = phase3Color;
-        else if (healthPercent <= bossController.phase2HealthPercent)
-            fillImage.color = phase2Color;
-        else
-            fillImage.color = phase1Color;
     }
 
     private void UpdateHealthText(int currentHealth, int maxHealth)
