@@ -14,6 +14,21 @@ public class PlayerHealth : MonoBehaviour
     public float knockbackForce = 5f;
     public float knockbackDuration = 0.2f;
 
+    [Header("Health Regen")]
+    [Tooltip("Aktif/nonaktifin auto-regen")]
+    public bool regenEnabled = true;
+
+    [Tooltip("Berapa detik player harus gak kena damage dulu sebelum regen mulai jalan")]
+    public float regenDelay = 5f;
+
+    [Tooltip("HP yang di-heal tiap satu 'tick' regen")]
+    public int regenAmountPerTick = 5;
+
+    [Tooltip("Jeda antar tick regen (detik)")]
+    public float regenTickInterval = 1f;
+
+    private float lastDamageTime = -Mathf.Infinity;
+
     public Rigidbody2D rb;
     public Animator animator;
     public SpriteRenderer spriteRenderer;
@@ -29,11 +44,15 @@ public class PlayerHealth : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (playerMovement == null) playerMovement = GetComponent<PlayerMovement>();
+
+        StartCoroutine(RegenWatcher());
     }
 
     public void TakeDamage(int damageAmount, Vector2 damageSourcePosition)
     {
         if (isInvincible || isDead) return;
+
+        lastDamageTime = Time.time;
 
         currentHealth -= damageAmount;
         currentHealth = Mathf.Max(currentHealth, 0);
@@ -83,6 +102,20 @@ public class PlayerHealth : MonoBehaviour
 
         if (spriteRenderer != null) spriteRenderer.enabled = true;
         isInvincible = false;
+    }
+
+    private IEnumerator RegenWatcher()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(regenTickInterval);
+
+            if (!regenEnabled || isDead) continue;
+            if (currentHealth >= maxHealth) continue;
+            if (Time.time - lastDamageTime < regenDelay) continue;
+
+            Heal(regenAmountPerTick);
+        }
     }
 
     public void Heal(int healAmount)

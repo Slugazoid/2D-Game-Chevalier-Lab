@@ -2,8 +2,6 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-// Boss ground-melee dengan sistem fase. Fase cuma nge-tune angka yang udah
-// ada (speed, cooldown, damage) berdasarkan sisa HP
 public class BossController : MonoBehaviour, IDamageable
 {
     private enum BossState { Idle, Chase, Attack, Hurt, Dead }
@@ -29,7 +27,6 @@ public class BossController : MonoBehaviour, IDamageable
     public float attackRange = 1.2f;
     public int attackDamage = 10;
     public float attackCooldown = 1.5f;
-    [Tooltip("Jeda dari trigger animasi Attack sampe damage beneran kekasih (ganti manual, bukan lewat Animation Event lagi)")]
     public float attackDelay = 0.3f;
     private float nextAttackTime = 0f;
 
@@ -40,10 +37,7 @@ public class BossController : MonoBehaviour, IDamageable
     private float hurtTimer = 0f;
     public float deathYOffset = 0.3f;
 
-    // Dengerin ini dari HealthBarUI buat update slider (sama pola kayak PlayerHealth.cs)
     public event Action<int, int> OnHealthChanged;
-
-    // Dengerin ini dari BossVictoryTrigger buat transisi ke Credits
     public event Action OnBossDeath;
 
     [Tooltip("Pindah ke Fase 2 kalau sisa HP di bawah persentase ini")]
@@ -53,7 +47,7 @@ public class BossController : MonoBehaviour, IDamageable
 
     [Header("Phase 2 Multiplier")]
     public float phase2SpeedMult = 1.25f;
-    public float phase2CooldownMult = 0.7f;   // makin kecil = makin sering nyerang
+    public float phase2CooldownMult = 0.7f;
     public float phase2DamageMult = 1.15f;
 
     [Header("Phase 3 (Enrage) Multiplier")]
@@ -63,7 +57,6 @@ public class BossController : MonoBehaviour, IDamageable
 
     private int currentPhase = 1;
 
-    // nilai efektif yang beneran dipakai di gameplay, dihitung ulang tiap ganti fase
     private float effectiveMoveSpeed;
     private float effectiveCooldown;
     private int effectiveDamage;
@@ -83,7 +76,6 @@ public class BossController : MonoBehaviour, IDamageable
             if (p != null) player = p.transform;
         }
 
-        // Langsung ngadep ke player begitu fight mulai, apapun posisi awal boss.
         if (player != null)
         {
             float initialDirection = player.position.x > transform.position.x ? 1f : -1f;
@@ -167,7 +159,7 @@ public class BossController : MonoBehaviour, IDamageable
         {
             if (animator != null)
             {
-                animator.SetInteger("AttackIndex", UnityEngine.Random.Range(0, 2)); // 0 = BossAttack1, 1 = BossAttack2
+                animator.SetInteger("AttackIndex", UnityEngine.Random.Range(0, 2));
                 animator.SetTrigger("Attack");
             }
             StartCoroutine(DealDamageAfterDelay());
@@ -175,8 +167,6 @@ public class BossController : MonoBehaviour, IDamageable
         }
     }
 
-    // Ganti Animation Event: damage kekasih otomatis attackDelay detik setelah trigger,
-    // ga perlu nempelin event manual di tiap clip attack lagi.
     private IEnumerator DealDamageAfterDelay()
     {
         yield return new WaitForSeconds(attackDelay);
@@ -252,7 +242,6 @@ public class BossController : MonoBehaviour, IDamageable
         }
     }
 
-    // Feedback visual sederhana pas ganti fase - kedip putih/oranye sebentar.
     private IEnumerator PhaseTransitionFlash()
     {
         if (spriteRenderer == null) yield break;
@@ -284,9 +273,6 @@ public class BossController : MonoBehaviour, IDamageable
         OnBossDeath?.Invoke();
     }
 
-    // Nunggu boss bener-bener napak lantai dulu (gravity natural yang nurunin dia),
-    // baru abis itu fisikanya dikunci total biar mayatnya diem selamanya di situ
-    // (ga bisa ke-push atau jatuh tembus lantai lagi walau collider ground nanti dimatiin).
     private IEnumerator FreezeOnceGrounded()
     {
         while (groundCheck == null || !Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer))

@@ -5,13 +5,10 @@ using System.Collections;
 public class PauseMenuUI : MonoBehaviour
 {
     [Header("Referensi")]
-    [Tooltip("Panel Pause yang mau ditampilkan (harus punya CanvasGroup)")]
     public CanvasGroup pausePanel;
 
-    [Tooltip("Opsional — dipakai untuk cegah pause kalau player sudah mati (Game Over sedang tampil)")]
     public PlayerHealth playerHealth;
 
-    [Tooltip("Drag PlayerMovement Player, biar kontrol player benar-benar mati total saat pause")]
     public PlayerMovement playerMovement;
 
     [Header("Fade")]
@@ -60,7 +57,7 @@ public class PauseMenuUI : MonoBehaviour
 
     public void Pause()
     {
-        if (isPaused) return; // cegah double-call kalau ke-panggil 2x sebelum sempat toggle balik
+        if (isPaused) return;
         isPaused = true;
 
         Time.timeScale = 0f;
@@ -83,10 +80,9 @@ public class PauseMenuUI : MonoBehaviour
         StartFade(1f);
     }
 
-    // Attach ke OnClick() tombol "Resume" di Inspector
     public void Resume()
     {
-        if (!isPaused) return; // cegah double-call
+        if (!isPaused) return;
         isPaused = false;
 
         Time.timeScale = 1f;
@@ -110,8 +106,6 @@ public class PauseMenuUI : MonoBehaviour
     private void StartFade(float targetAlpha)
     {
         if (pausePanel == null) return;
-
-        // Hentikan fade sebelumnya kalau masih jalan, biar gak tabrakan/ke-overlap
         if (fadeCoroutine != null)
         {
             StopCoroutine(fadeCoroutine);
@@ -135,39 +129,33 @@ public class PauseMenuUI : MonoBehaviour
         fadeCoroutine = null;
     }
 
-    // Attach ke OnClick() tombol "Restart" di Inspector
     public void RestartLevel()
     {
-        Time.timeScale = 1f; // Wajib reset waktu sebelum pindah scene
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    // Attach ke OnClick() tombol "Main Menu" di Inspector
     public void BackToMainMenu()
     {
-        Time.timeScale = 1f; // Wajib reset waktu sebelum pindah scene
+        Time.timeScale = 1f;
 
-        // Cegah spam klik dan pastiin pause panel gak nyangkut aktif pas fade jalan
         if (pausePanel != null)
         {
             pausePanel.interactable = false;
             pausePanel.blocksRaycasts = false;
         }
 
-        // Pindah ke Main Menu pake fade, sama kayak transisi Boss -> Credits
         if (SceneFader.Instance != null)
         {
             SceneFader.Instance.FadeToScene("MainMenu");
         }
         else
         {
-            // Fallback kalau SceneFader belum ke-load di scene ini
             Debug.LogWarning("SceneFader.Instance null, load scene langsung tanpa fade.");
-            SceneManager.LoadScene("MainMenu"); // Load nama scene Main Menu sesuai yang ada di Build Profiles
+            SceneManager.LoadScene("MainMenu");
         }
     }
 
-    // Attach ke OnClick() tombol "Quit" di Inspector (opsional)
     public void QuitGame()
     {
         Time.timeScale = 1f;

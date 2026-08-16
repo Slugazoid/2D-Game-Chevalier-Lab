@@ -3,24 +3,17 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-// Tempel script ini di GameObject tombol (yang sama dengan komponen Button).
-// Efeknya: tombol membesar (scale up) halus pas mouse hover, balik normal pas mouse keluar.
-// Opsional bisa juga ganti warna sedikit biar makin kerasa "nyala" pas di-hover.
 [RequireComponent(typeof(RectTransform))]
 public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Scale Effect")]
-    [Tooltip("Seberapa besar tombol membesar pas di-hover, 1 = ukuran normal")]
     public float hoverScale = 1.1f;
 
     [Tooltip("Durasi animasi scale (detik)")]
     public float scaleDuration = 0.12f;
 
     [Header("Color Effect (opsional)")]
-    [Tooltip("Aktifkan supaya warna tombol berubah pas di-hover")]
     public bool useColorTint = true;
-
-    [Tooltip("Warna tombol pas di-hover")]
     public Color hoverColor = new Color(1f, 0.85f, 0.4f, 1f);
 
     private RectTransform rectTransform;
@@ -35,8 +28,6 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
         rectTransform = GetComponent<RectTransform>();
         normalScale = rectTransform.localScale;
 
-        // Ambil Graphic dari komponen Button kalau ada (biasanya Image di tombol itu sendiri),
-        // supaya efek warna otomatis nempel ke tombolnya tanpa perlu drag manual di Inspector.
         targetGraphic = GetComponent<Graphic>();
         if (targetGraphic != null)
         {
@@ -104,7 +95,6 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     private void OnDisable()
     {
-        // Reset pas tombol dinonaktifkan (misal pas pindah panel), biar gak nyangkut gede/warna aneh.
         if (rectTransform != null) rectTransform.localScale = normalScale;
         if (targetGraphic != null) targetGraphic.color = normalColor;
     }

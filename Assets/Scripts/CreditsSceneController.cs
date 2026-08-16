@@ -2,8 +2,6 @@ using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
 
-// Nempel di scene Credits. Nunggu video selesai, terus otomatis balik ke MainMenu.
-// Bisa juga di-skip manual pakai tombol.
 public class CreditsSceneController : MonoBehaviour
 {
     [Header("Refs")]
@@ -43,7 +41,6 @@ public class CreditsSceneController : MonoBehaviour
         }
     }
 
-    // Dipanggil otomatis oleh VideoPlayer begitu video selesai diputar
     private void HandleVideoSelesai(VideoPlayer vp)
     {
         GoToMainMenu();
@@ -54,7 +51,7 @@ public class CreditsSceneController : MonoBehaviour
         if (sudahPindahScene) return;
         sudahPindahScene = true;
 
-        Time.timeScale = 1f; // jaga-jaga kalau sebelumnya di-pause
+        Time.timeScale = 1f; 
         SceneManager.LoadScene(namaSceneMainMenu);
     }
 }
