@@ -139,9 +139,9 @@ Tim lintas peran yang bekerja bersama menutupi Game Design, Programming, Art & U
 
 | Nama | NIM |
 |---|---|
-| Albert Sebastian Tobing | 103022400122 |
-| Muhammad Daffa Arifin | 103022400056 |
-| Ghaisani Zhafarina | 103012300379 |
+| Albert Sebastian Tobing | 
+| Muhammad Daffa Arifin |
+| Ghaisani Zhafarina |
 
 **Chevalier Laboratory · Game Development · Universitas Telkom Bandung, 2026**
 
