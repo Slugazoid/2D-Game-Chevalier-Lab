@@ -146,7 +146,25 @@ public class PauseMenuUI : MonoBehaviour
     public void BackToMainMenu()
     {
         Time.timeScale = 1f; // Wajib reset waktu sebelum pindah scene
-        SceneManager.LoadScene("MainMenu"); // Load nama scene Main Menu sesuai yang ada di Build Profiles
+
+        // Cegah spam klik dan pastiin pause panel gak nyangkut aktif pas fade jalan
+        if (pausePanel != null)
+        {
+            pausePanel.interactable = false;
+            pausePanel.blocksRaycasts = false;
+        }
+
+        // Pindah ke Main Menu pake fade, sama kayak transisi Boss -> Credits
+        if (SceneFader.Instance != null)
+        {
+            SceneFader.Instance.FadeToScene("MainMenu");
+        }
+        else
+        {
+            // Fallback kalau SceneFader belum ke-load di scene ini
+            Debug.LogWarning("SceneFader.Instance null, load scene langsung tanpa fade.");
+            SceneManager.LoadScene("MainMenu"); // Load nama scene Main Menu sesuai yang ada di Build Profiles
+        }
     }
 
     // Attach ke OnClick() tombol "Quit" di Inspector (opsional)
