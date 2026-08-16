@@ -137,8 +137,8 @@ SECTOR.09 menggunakan gaya visual **2D Pixel Art** dengan tema kontras: lingkung
 
 Tim lintas peran yang bekerja bersama menutupi Game Design, Programming, Art & UI/UX, hingga Audio dalam satu siklus produksi.
 
-| Nama | NIM |
-|---|---|
+| Nama |
+|---|
 | Albert Sebastian Tobing | 
 | Muhammad Daffa Arifin |
 | Ghaisani Zhafarina |
